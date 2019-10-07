@@ -30,6 +30,10 @@ public:
 
     void numPoints(typename pcl::PointCloud<PointT>::Ptr cloud);
 
+	float dotProduct(std::vector<float> vec1, std::vector<float> vec2);
+
+	std::vector<float> crossProduct(std::vector<float> vec1, std::vector<float> vec2);
+
     typename pcl::PointCloud<PointT>::Ptr FilterCloud(typename pcl::PointCloud<PointT>::Ptr cloud, float filterRes, Eigen::Vector4f minPoint, Eigen::Vector4f maxPoint);
 
     std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> SeparateClouds(pcl::PointIndices::Ptr inliers, typename pcl::PointCloud<PointT>::Ptr cloud);
