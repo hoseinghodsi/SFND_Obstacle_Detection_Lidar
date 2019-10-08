@@ -51,12 +51,10 @@ void simpleHighway(pcl::visualization::PCLVisualizer::Ptr& viewer)
   
 }
 
-void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer) //, ProcessPointClouds<pcl::PointXYZ> pointProcessor, pcl::PointCloud<pcl::PointXYZ>::Ptr inputCloud)
+void cityBlock(pcl::visualization::PCLVisualizer::Ptr& viewer, ProcessPointClouds<pcl::PointXYZI> pointProcessor, pcl::PointCloud<pcl::PointXYZI>::Ptr inputCloud)
 {
-	ProcessPointClouds<pcl::PointXYZ>* pointProcessor = new ProcessPointClouds<pcl::PointXYZ>;
-	pcl::PointCloud<pcl::PointXYZ>::Ptr inputCloud = pointProcessor->loadPcd("../src/sensors/data/pcd/data_1/0000000000.pcd");
-
-	std::pair<pcl::PointCloud<pcl::PointXYZ>::Ptr, pcl::PointCloud<pcl::PointXYZ>::Ptr> segCloud = pointProcessor->SegmentPlane(inputCloud, 100, 0.2);
+	pcl::PointCloud<pcl::PointXYZI>::Ptr filterCloud = pointProcessor.FilterCloud(inputCloud, 0.2, Eigen::Vector4f(-12, -7, -2, 1), Eigen::Vector4f(30, 9, 2, 1));
+	std::pair<pcl::PointCloud<pcl::PointXYZI>::Ptr, pcl::PointCloud<pcl::PointXYZI>::Ptr> segCloud = pointProcessor.SegmentPlane(filterCloud, 100, 0.10);
 	renderPointCloud(viewer, segCloud.first, "ObstCloud", Color(1, 0, 0));
 	renderPointCloud(viewer, segCloud.second, "planeCloud", Color(0, 1, 0));
 }
@@ -90,10 +88,13 @@ int main (int argc, char** argv)
 {
     std::cout << "starting enviroment" << std::endl;
 
+	ProcessPointClouds<pcl::PointXYZI> pointProcessorI;
+	pcl::PointCloud<pcl::PointXYZI>::Ptr inputCloud = pointProcessorI.loadPcd("../src/sensors/data/pcd/data_1/0000000000.pcd");
+
     pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
     CameraAngle setAngle = XY;
     initCamera(setAngle, viewer);
-    cityBlock(viewer);
+    cityBlock(viewer, pointProcessorI, inputCloud);
 
     while (!viewer->wasStopped ())
     {

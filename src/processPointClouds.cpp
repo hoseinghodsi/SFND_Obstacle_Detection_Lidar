@@ -27,8 +27,6 @@ typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::FilterCloud(ty
     // Time segmentation process
     auto startTime = std::chrono::steady_clock::now();
 
-	auto startTime = std::chrono::steady_clock::now();
-
 	pcl::VoxelGrid<PointT> vg;
 	typename pcl::PointCloud<PointT>::Ptr cloudFiltered(new pcl::PointCloud<PointT>);
 
@@ -63,7 +61,7 @@ typename pcl::PointCloud<PointT>::Ptr ProcessPointClouds<PointT>::FilterCloud(ty
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime);
     std::cout << "filtering took " << elapsedTime.count() << " milliseconds" << std::endl;
 
-    return cloud;
+    return cloudRegion;
 
 }
 
@@ -116,7 +114,8 @@ template<typename PointT>
 std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT>::Ptr> ProcessPointClouds<PointT>::SegmentPlane(typename pcl::PointCloud<PointT>::Ptr cloud, int maxIterations, float distanceThreshold)
 {
 	std::unordered_set<int> inlierPoints;
-	
+	srand(time(NULL));
+
 	while (maxIterations--)
 	{
 		std::unordered_set<int> inliers;
@@ -163,8 +162,11 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
 			if (inliers.count(index) > 0)
 				continue;
 
-			pcl::PointXYZ point = cloud->points[index];
-			std::vector<float> newPoint = { point.x, point.y, point.z };
+			pcl::PointXYZI point = cloud->points[index];
+			std::vector<float> newPoint;
+			newPoint.push_back(point.x);
+			newPoint.push_back(point.y);
+			newPoint.push_back(point.z);
 
 			float dist = fabs(dotProduct(normalVector, newPoint) + planeEquation[3]) / sqrt(planeEquation[0] * planeEquation[0] + planeEquation[1] * planeEquation[1] + planeEquation[2] * planeEquation[2]);
 
@@ -175,12 +177,12 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
 			inlierPoints = inliers;
 	}
 	
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudInliers(new pcl::PointCloud<pcl::PointXYZ>());
-	pcl::PointCloud<pcl::PointXYZ>::Ptr cloudOutliers(new pcl::PointCloud<pcl::PointXYZ>());
+	pcl::PointCloud<pcl::PointXYZI>::Ptr cloudInliers(new pcl::PointCloud<pcl::PointXYZI>());
+	pcl::PointCloud<pcl::PointXYZI>::Ptr cloudOutliers(new pcl::PointCloud<pcl::PointXYZI>());
 
 	for (int index = 0; index < cloud->points.size(); index++)
 	{
-		pcl::PointXYZ point = cloud->points[index];
+		pcl::PointXYZI point = cloud->points[index];
 		if (inlierPoints.count(index))
 			cloudInliers->points.push_back(point);
 		else
