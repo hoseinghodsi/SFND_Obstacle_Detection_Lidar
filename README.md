@@ -9,4 +9,4 @@ In this project you will take everything that you have learned for processing po
 
 <img src="gifs/FPD_view_data_1.gif" width="700" height="400" />
 
-<img src="gifs/FPD_view_data_2.gif" width="700" height="400" />
+<img src="gifs/FPS_view_data_2.gif" width="700" height="400" />
