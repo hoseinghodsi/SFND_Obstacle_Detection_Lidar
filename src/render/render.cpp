@@ -67,6 +67,32 @@ void renderPointCloud(pcl::visualization::PCLVisualizer::Ptr& viewer, const pcl:
 	viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 2, name);
 }
 
+void renderPointCloud_SaveScreenshot(pcl::visualization::PCLVisualizer::Ptr& viewer, const pcl::PointCloud<pcl::PointXYZI>::Ptr& cloud, std::string name, Color color, int id)
+{
+
+	if (color.r == -1)
+	{
+		// Select color based off of cloud intensity
+		pcl::visualization::PointCloudColorHandlerGenericField<pcl::PointXYZI> intensity_distribution(cloud, "intensity");
+		viewer->addPointCloud<pcl::PointXYZI>(cloud, intensity_distribution, name);
+	}
+	else
+	{
+		// Select color based off input value
+		viewer->addPointCloud<pcl::PointXYZI>(cloud, name);
+		viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_COLOR, color.r, color.g, color.b, name);
+		viewer->saveScreenshot(name + "00" + std::to_string(id) + ".png");
+	}
+
+	viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 2, name);
+}
+
+// ScreenShot method added by Hossein Ghodsi
+void ScreenShot(pcl::visualization::PCLVisualizer::Ptr& viewer, std::string name, int id)
+{
+	viewer->saveScreenshot(name + std::to_string(id) + ".png");
+}
+
 // Draw wire frame box with filled transparent color 
 void renderBox(pcl::visualization::PCLVisualizer::Ptr& viewer, Box box, int id, Color color, float opacity)
 {

@@ -193,7 +193,7 @@ std::pair<typename pcl::PointCloud<PointT>::Ptr, typename pcl::PointCloud<PointT
 	return segResult;
 
 }
-
+// Check nearby points to a target point
 template<typename PointT>
 void ProcessPointClouds<PointT>::ProximityFinder(int idx, typename pcl::PointCloud<PointT>::Ptr cloud, std::vector<bool> &IsProcessed, KdTree* tree, std::vector<int>& cluster, float clusterTolerance)
 {
